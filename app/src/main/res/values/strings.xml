@@ -21,4 +21,6 @@
     <string name="tip_amount">Tip Amount: %s</string>
     <string name="how_was_the_service">Tip Percentage</string>
     <string name="round_up_tip">Round up tip?</string>
+    <string name="round_up_total">Round up the total?</string>
+    <string name="total_bill">Total Bill: %s</string>
 </resources>
