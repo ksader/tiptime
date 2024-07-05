@@ -89,7 +89,6 @@ fun TipTimeLayout() {
     val tip = calculateTip(amount, tipPercent, roundUp)
 
 
-
     Column(
         modifier = Modifier
             .statusBarsPadding()
@@ -135,7 +134,15 @@ fun TipTimeLayout() {
             onRoundUpChanged = { roundUp = it },
             modifier = Modifier.padding(bottom = 32.dp))
         Text(
-            text = stringResource(R.string.tip_amount, tip),
+            text = stringResource(
+                R.string.tip_amount,
+                NumberFormat.getCurrencyInstance().format(tip)
+            ),
+            style = MaterialTheme.typography.displaySmall
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+        Text(
+            text = stringResource(R.string.total_bill, calculateTotalBill(amount, tip, false)),
             style = MaterialTheme.typography.displaySmall
         )
         Spacer(modifier = Modifier.height(150.dp))
@@ -194,12 +201,20 @@ fun RoundTheTipRow(
 internal fun calculateTip(
     amount: Double,
     tipPercent: Double = 15.0,
-    roundUp: Boolean): String {
+    roundUp: Boolean): Double {
     var tip = tipPercent / 100 * amount
     if (roundUp) {
         tip = kotlin.math.ceil(tip)
     }
-    return NumberFormat.getCurrencyInstance().format(tip)
+    return tip
+}
+
+@VisibleForTesting
+internal fun calculateTotalBill(amount: Double, tip: Double, roundUp: Boolean): Double {
+    if(roundUp) {
+        return kotlin.math.ceil(amount + tip)
+    }
+    return amount + tip
 }
 
 @Preview(showBackground = true)
