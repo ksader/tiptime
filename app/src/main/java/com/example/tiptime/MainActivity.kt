@@ -50,6 +50,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -85,6 +86,7 @@ fun TipTimeLayout() {
     val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
 
     var roundUp by remember { mutableStateOf(false) }
+    var roundUpTotalBill by remember { mutableStateOf(false) }
 
     val tip = calculateTip(amount, tipPercent, roundUp)
 
@@ -129,10 +131,21 @@ fun TipTimeLayout() {
             modifier = Modifier
                 .padding(bottom = 32.dp)
                 .fillMaxWidth())
-        RoundTheTipRow(
+        RoundUpRow(
             roundUp = roundUp,
             onRoundUpChanged = { roundUp = it },
-            modifier = Modifier.padding(bottom = 32.dp))
+            text = stringResource(id = R.string.round_up_tip),
+            testTag = "roundUpTip",
+            modifier = Modifier.padding(bottom = 5.dp)
+        )
+        RoundUpRow(
+            roundUp = roundUpTotalBill,
+            onRoundUpChanged = { roundUpTotalBill = it },
+            text = stringResource(id = R.string.round_up_total),
+            testTag = "roundUpTotalBill",
+            modifier = Modifier.padding(bottom = 32.dp)
+        )
+
         Text(
             text = stringResource(
                 R.string.tip_amount,
@@ -140,9 +153,9 @@ fun TipTimeLayout() {
             ),
             style = MaterialTheme.typography.displaySmall
         )
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = stringResource(R.string.total_bill, calculateTotalBill(amount, tip, false)),
+            text = stringResource(R.string.total_bill,  NumberFormat.getCurrencyInstance().format(calculateTotalBill(amount, tip, roundUpTotalBill))),
             style = MaterialTheme.typography.displaySmall
         )
         Spacer(modifier = Modifier.height(150.dp))
@@ -170,9 +183,11 @@ fun EditNumberField(
 }
 
 @Composable
-fun RoundTheTipRow(
+fun RoundUpRow(
     roundUp: Boolean,
     onRoundUpChanged: (Boolean) -> Unit,
+    text: String,
+    testTag: String,
     modifier: Modifier
 )  {
     Row(
@@ -181,13 +196,14 @@ fun RoundTheTipRow(
            .size(48.dp),
         verticalAlignment = Alignment.CenterVertically
     ){
-        Text(text = stringResource(id = R.string.round_up_tip))
+        Text(text)
         Switch(
             checked = roundUp,
             onCheckedChange = onRoundUpChanged,
             modifier = modifier
                 .fillMaxWidth()
                 .wrapContentWidth(Alignment.End)
+                .testTag(testTag)
         )
     }
 }
