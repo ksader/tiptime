@@ -86,7 +86,6 @@ fun TipTimeLayout() {
     val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
 
     var roundUp by remember { mutableStateOf(false) }
-    var roundUpTotalBill by remember { mutableStateOf(false) }
 
     val tip = calculateTip(amount, tipPercent, roundUp)
 
@@ -138,13 +137,6 @@ fun TipTimeLayout() {
             testTag = "roundUpTip",
             modifier = Modifier.padding(bottom = 5.dp)
         )
-        RoundUpRow(
-            roundUp = roundUpTotalBill,
-            onRoundUpChanged = { roundUpTotalBill = it },
-            text = stringResource(id = R.string.round_up_total),
-            testTag = "roundUpTotalBill",
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
 
         Text(
             text = stringResource(
@@ -155,7 +147,8 @@ fun TipTimeLayout() {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = stringResource(R.string.total_bill,  NumberFormat.getCurrencyInstance().format(calculateTotalBill(amount, tip, roundUpTotalBill))),
+            text = stringResource(R.string.total_bill,
+                NumberFormat.getCurrencyInstance().format(calculateTotalBill(amount, tip))),
             style = MaterialTheme.typography.displaySmall
         )
         Spacer(modifier = Modifier.height(150.dp))
@@ -217,19 +210,17 @@ fun RoundUpRow(
 internal fun calculateTip(
     amount: Double,
     tipPercent: Double = 15.0,
-    roundUp: Boolean): Double {
+    evenDollarTotal: Boolean): Double {
     var tip = tipPercent / 100 * amount
-    if (roundUp) {
-        tip = kotlin.math.ceil(tip)
+    if (evenDollarTotal) {
+        val roundUpBillAmount = kotlin.math.ceil(amount) - amount
+        tip = kotlin.math.ceil(tip)  + roundUpBillAmount
     }
     return tip
 }
 
 @VisibleForTesting
-internal fun calculateTotalBill(amount: Double, tip: Double, roundUp: Boolean): Double {
-    if(roundUp) {
-        return kotlin.math.ceil(amount + tip)
-    }
+internal fun calculateTotalBill(amount: Double, tip: Double): Double {
     return amount + tip
 }
 
