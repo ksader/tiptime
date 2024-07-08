@@ -21,12 +21,12 @@ class TipCalculatorTests {
     @Test
     fun calculateTotal() {
         val totalBill = 12.2
-        assertEquals(totalBill, calculateTotalBill(10.0, 2.2, false), 0.001)
+        assertEquals(totalBill, calculateTotalBill(10.0, 2.2), 0.001)
     }
 
     @Test
     fun calculateTotal_RoundUpToWholeDollar() {
         val totalBill = 156.00
-        assertEquals(totalBill, calculateTotalBill(126.57, 29.43, false), 0.001)
+        assertEquals(totalBill, calculateTotalBill(126.57, 29.43), 0.001)
     }
 }
